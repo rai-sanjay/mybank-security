@@ -4,21 +4,25 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class MyBankSecurityConfig {
 
-	// Secures all endpoints invoked from form and basic security
-/*	@Bean
-	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
-		System.out.println("Created own bean of security filter chain : CALLED AT APPLICATION STARTUP TIME");
-		httpSecurity.authorizeHttpRequests((requests) -> requests.anyRequest().authenticated());
-		httpSecurity.formLogin(Customizer.withDefaults());
-		httpSecurity.httpBasic(Customizer.withDefaults());
-		return httpSecurity.build();
+	@Bean
+	InMemoryUserDetailsManager userDetailsService() {
 
-	}*/
+		UserDetails admin = User.withDefaultPasswordEncoder().username("sanjay").password("1234").authorities("admin")
+				.build();
+		UserDetails user = User.withDefaultPasswordEncoder().username("mamta").password("1234").authorities("user")
+				.build();
+		
+		return new InMemoryUserDetailsManager(admin, user);
+
+	}
 	
 	@Bean
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -55,4 +59,15 @@ public class MyBankSecurityConfig {
 
 			}
 			*/
+	
+	// Secures all endpoints invoked from form and basic security
+	/*	@Bean
+		SecurityFilterChain defaultSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
+			System.out.println("Created own bean of security filter chain : CALLED AT APPLICATION STARTUP TIME");
+			httpSecurity.authorizeHttpRequests((requests) -> requests.anyRequest().authenticated());
+			httpSecurity.formLogin(Customizer.withDefaults());
+			httpSecurity.httpBasic(Customizer.withDefaults());
+			return httpSecurity.build();
+
+		}*/
 }
