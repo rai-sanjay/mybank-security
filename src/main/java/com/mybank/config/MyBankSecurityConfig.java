@@ -33,4 +33,26 @@ public class MyBankSecurityConfig {
 
 	}
 
+	//Deny All
+			/*@Bean
+			SecurityFilterChain filterSecurityChain(HttpSecurity httpSecurity) throws Exception {
+
+				httpSecurity.authorizeHttpRequests((request) -> request.anyRequest().denyAll())
+						.formLogin(Customizer.withDefaults()).httpBasic(Customizer.withDefaults());
+				return httpSecurity.build();
+
+			}*/
+			
+	//Permit All
+			
+			/*
+			@Bean
+			SecurityFilterChain filterSecurityChain(HttpSecurity httpSecurity) throws Exception {
+
+				httpSecurity.authorizeHttpRequests((request) -> request.anyRequest().permitAll())
+						.formLogin(Customizer.withDefaults()).httpBasic(Customizer.withDefaults());
+				return httpSecurity.build();
+
+			}
+			*/
 }
