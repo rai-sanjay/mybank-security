@@ -8,7 +8,7 @@
 		<version>3.3.0-SNAPSHOT</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.mybank.security</groupId>
+	<groupId>com.mybank</groupId>
 	<artifactId>mybank-security</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>mybank-security</name>
