@@ -42,11 +42,11 @@ public class MyBankSecurityConfig {
 	
 	@Bean
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity
+		httpSecurity.csrf((csrf) -> csrf.disable())
 		.authorizeHttpRequests(
 				(requests) -> requests.requestMatchers("/api/account", "/api/balance", "/api/loan", "/api/card")
 						.authenticated() // APIs need to be authenticated -- can use RegEx also
-		.requestMatchers("/api/notice", "/api/contact").permitAll()) // does not needs authentication
+		.requestMatchers("/api/notice", "/api/contact","/api/register").permitAll()) // does not needs authentication
 		.formLogin(Customizer.withDefaults()).httpBasic(Customizer.withDefaults()); // source of request - Rest and HTML form based login
 
 		return httpSecurity.build();
