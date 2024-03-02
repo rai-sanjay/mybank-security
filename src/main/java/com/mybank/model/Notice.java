@@ -1,9 +1,11 @@
 package com.mybank.model;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +15,7 @@ import lombok.Setter;
 @Getter
 public class Notice {
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "notice_id")
 	private Integer noticeId;
 
@@ -23,15 +26,15 @@ public class Notice {
 	private String noticeDetails;
 
 	@Column(name = "notic_beg_date")
-	private Date noticBegDt;
+	private LocalDate noticBegDt;
 	
 	@Column(name = "notic_end_date")
-	private Date noticEndDt;
+	private LocalDate noticEndDt;
 	
 	@Column(name = "created_date")
-	private Date createDt;
+	private LocalDate createDt;
 	
 	@Column(name = "updated_date")
-	private Date updateDt;
+	private LocalDate updateDt;
 
 }
