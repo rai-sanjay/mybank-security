@@ -1,6 +1,5 @@
 package com.mybank.model;
 
-import java.sql.Date;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

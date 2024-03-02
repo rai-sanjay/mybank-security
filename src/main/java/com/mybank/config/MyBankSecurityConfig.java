@@ -46,7 +46,7 @@ public class MyBankSecurityConfig {
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf((csrf) -> csrf.disable())
 		.authorizeHttpRequests(
-				(requests) -> requests.requestMatchers("/api/account", "/api/balance", "/api/loan", "/api/card")
+				(requests) -> requests.requestMatchers("/api/account", "/api/balance", "/api/loan", "/api/card","/api/users")
 						.authenticated() // APIs need to be authenticated -- can use RegEx also
 		.requestMatchers("/api/notice", "/api/contact","/api/register").permitAll()) // does not needs authentication
 		.formLogin(Customizer.withDefaults()).httpBasic(Customizer.withDefaults()); // source of request - Rest and HTML form based login
