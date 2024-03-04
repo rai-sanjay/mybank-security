@@ -1,5 +1,6 @@
 package com.mybank.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,8 @@ public class LoginController {
         	String hashedPwd = passwordEncoder.encode(customer.getPassword());
         	//set it to Customer object before saving 
         	customer.setPassword(hashedPwd);
-            savedCustomer = customerRepository.save(customer);
+        	customer.setCreatedDate(LocalDate.now());
+        	savedCustomer = customerRepository.save(customer);
             if (savedCustomer.getId() > 0) {
                 response = ResponseEntity
                         .status(HttpStatus.CREATED)

@@ -2,6 +2,7 @@ package com.mybank.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -14,6 +15,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.mybank.model.Authority;
 import com.mybank.model.Customer;
 import com.mybank.repository.ICustomerRepository;
 
@@ -34,16 +36,26 @@ public class MyBankUsernamePasswordAuthenticationProvider implements Authenticat
 		List<Customer> customer = customerRepository.findByEmail(username);
 		if (customer.size() > 0) {
 			if (passwordEncoder.matches(pwd, customer.get(0).getPassword())) {
-				List<GrantedAuthority> authorities = new ArrayList<>();
-				authorities.add(new SimpleGrantedAuthority(customer.get(0).getRole()));
-				//Do all your custom validations before returning this --age/country etc...
-				return new UsernamePasswordAuthenticationToken(username, pwd, authorities);
+				// Do all your custom validations before returning this --age/country etc...
+				// Authroity is FetchType is Eager in Customer, because when we load customer,
+				// we want authrities also. be careful, otherwise application will not work
+				//
+				return new UsernamePasswordAuthenticationToken(username, pwd,
+						getGrantedAuthorities(customer.get(0).getAuthorities()));
 			} else {
 				throw new BadCredentialsException("Invalid password!");
 			}
 		} else {
 			throw new BadCredentialsException("No user registered with this details!");
 		}
+	}
+
+	private List<GrantedAuthority> getGrantedAuthorities(Set<Authority> authorities) {
+		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+		for (Authority authority : authorities) {
+			grantedAuthorities.add(new SimpleGrantedAuthority(authority.getName()));
+		}
+		return grantedAuthorities;
 	}
 
 	@Override

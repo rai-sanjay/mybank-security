@@ -1,7 +1,9 @@
 package com.mybank;
 
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -9,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.mybank.model.Authority;
 import com.mybank.model.Customer;
 import com.mybank.model.Notice;
 import com.mybank.repository.ICustomerRepository;
@@ -39,7 +42,29 @@ public class MybankSecurityApplication implements CommandLineRunner {
 			customer.setName("Sanjay Rai");
 			customer.setEmail("rai.sanjay2015@outlook.com");
 			customer.setPassword(passwordEncoder.encode("12345"));
-			customer.setRole("ROOT");
+			
+			Authority authorityAccount = new Authority();
+			authorityAccount.setName("VIEW ACCOUNT");
+			authorityAccount.setCustomer(customer);
+			
+			Authority authorityBalance = new Authority();
+			authorityBalance.setName("VIEW BALANCE");
+			authorityBalance.setCustomer(customer);
+			
+			Authority authorityCard = new Authority();
+			authorityCard.setName("VIEW CARD");
+			authorityCard.setCustomer(customer);
+			
+			Authority authorityLoan = new Authority();
+			authorityLoan.setName("VIEW LOAN");
+			authorityLoan.setCustomer(customer);
+			
+			Set<Authority> authoritySet = new LinkedHashSet<>();
+			authoritySet.add(authorityAccount);
+			authoritySet.add(authorityBalance);
+			authoritySet.add(authorityCard);
+			authoritySet.add(authorityLoan);
+			customer.setAuthorities(authoritySet);
 			customer.setCreatedDate(LocalDate.now());
 			Customer insertedCustomer = customerRepository.save(customer);
 			System.out.println(insertedCustomer.getId());
