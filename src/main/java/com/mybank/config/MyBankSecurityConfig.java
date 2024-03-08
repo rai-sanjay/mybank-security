@@ -73,24 +73,22 @@ public class MyBankSecurityConfig {
 		}))
 		// ignoring CSRF for public POST/PUT APIs
 				.csrf((csrf) -> csrf.csrfTokenRequestHandler(requestAttributeHandler)
-						.ignoringRequestMatchers("/api/contact", "/api/register")
+						.ignoringRequestMatchers("contact", "register")
 						.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
 				.addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
 				.addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
 				/*.addFilterAt(new AuthoritiesLoggingAtFilter(), BasicAuthenticationFilter.class)*/
 				.addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
 				
-
-				
 				.authorizeHttpRequests((requests) -> requests
-						.requestMatchers("/api/account").hasRole("USER")
-						.requestMatchers("/api/balance").hasAnyRole("USER","ADMIN")
-						.requestMatchers("/api/loan").hasRole("USER")
-						.requestMatchers("/api/card").hasRole("ADMIN")
+						.requestMatchers("account").hasRole("USER")
+						.requestMatchers("balance").hasAnyRole("USER","ADMIN")
+						.requestMatchers("loan").hasRole("USER")
+						.requestMatchers("card").hasRole("ADMIN")
 						//ONLY Authentication
-						.requestMatchers("/api/user").authenticated() 
+						.requestMatchers("user").authenticated() 
 						// APIs need to be authenticated -- can use RegEx also
-						.requestMatchers("/api/notice", "/api/contact", "/api/register").permitAll()) // does not needs
+						.requestMatchers("notice", "contact", "register").permitAll()) // does not needs
 																										// authentication
 				.formLogin(Customizer.withDefaults()).httpBasic(Customizer.withDefaults()); // source of request - Rest
 																							// and HTML form based login
