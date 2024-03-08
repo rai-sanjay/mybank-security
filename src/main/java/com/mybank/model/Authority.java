@@ -18,7 +18,7 @@ import lombok.Setter;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "authorities")
+@Table(name = "roles")
 public class Authority{
 
 	@Id

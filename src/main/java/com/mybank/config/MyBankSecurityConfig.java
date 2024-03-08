@@ -76,10 +76,10 @@ public class MyBankSecurityConfig {
 
 				
 				.authorizeHttpRequests((requests) -> requests
-						.requestMatchers("/api/account").hasAuthority("VIEW ACCOUNT")
-						.requestMatchers("/api/balance").hasAnyAuthority("VIEW ACCOUNT","VIEW BALANCE")
-						.requestMatchers("/api/loan").hasAuthority("VIEW LOAN")
-						.requestMatchers("/api/card").hasAuthority("VIEW CARD")
+						.requestMatchers("/api/account").hasRole("USER")
+						.requestMatchers("/api/balance").hasAnyRole("USER","ADMIN")
+						.requestMatchers("/api/loan").hasRole("USER")
+						.requestMatchers("/api/card").hasRole("ADMIN")
 						//ONLY Authentication
 						.requestMatchers("/api/user").authenticated() 
 						// APIs need to be authenticated -- can use RegEx also

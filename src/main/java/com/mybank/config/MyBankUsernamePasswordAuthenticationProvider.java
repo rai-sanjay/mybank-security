@@ -19,6 +19,7 @@ import com.mybank.model.Authority;
 import com.mybank.model.Customer;
 import com.mybank.repository.ICustomerRepository;
 
+//403 - Forbidden error - debug both the methods in this class
 @Component
 public class MyBankUsernamePasswordAuthenticationProvider implements AuthenticationProvider {
 
@@ -55,6 +56,7 @@ public class MyBankUsernamePasswordAuthenticationProvider implements Authenticat
 		for (Authority authority : authorities) {
 			grantedAuthorities.add(new SimpleGrantedAuthority(authority.getName()));
 		}
+		System.out.println("ROLES - "+grantedAuthorities);
 		return grantedAuthorities;
 	}
 
