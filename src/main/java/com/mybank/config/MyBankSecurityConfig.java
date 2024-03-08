@@ -16,7 +16,10 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import com.mybank.filter.AuthoritiesLoggingAfterFilter;
+import com.mybank.filter.AuthoritiesLoggingAtFilter;
 import com.mybank.filter.CsrfCookieFilter;
+import com.mybank.filter.RequestValidationBeforeFilter;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -73,6 +76,10 @@ public class MyBankSecurityConfig {
 						.ignoringRequestMatchers("/api/contact", "/api/register")
 						.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
 				.addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+				.addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
+				/*.addFilterAt(new AuthoritiesLoggingAtFilter(), BasicAuthenticationFilter.class)*/
+				.addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
+				
 
 				
 				.authorizeHttpRequests((requests) -> requests
