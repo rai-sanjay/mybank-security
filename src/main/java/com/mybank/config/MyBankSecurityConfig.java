@@ -17,7 +17,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.mybank.filter.AuthoritiesLoggingAfterFilter;
-import com.mybank.filter.AuthoritiesLoggingAtFilter;
 import com.mybank.filter.CsrfCookieFilter;
 import com.mybank.filter.RequestValidationBeforeFilter;
 
@@ -25,24 +24,6 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Configuration
 public class MyBankSecurityConfig {
-
-	/*
-	 * @Bean InMemoryUserDetailsManager userDetailsService() {
-	 * 
-	 * UserDetails admin =
-	 * User.withUsername("sanjay").password("1234").authorities("admin") .build();
-	 * UserDetails user =
-	 * User.withUsername("mamta").password("1234").authorities("user") .build();
-	 * 
-	 * return new InMemoryUserDetailsManager(admin, user);
-	 * 
-	 * }
-	 */
-
-	/*
-	 * @Bean public UserDetailsService userDetailsService(DataSource dataSource) {
-	 * return new JdbcUserDetailsManager(dataSource); }
-	 */
 
 	@Bean
 	PasswordEncoder passwordEncoder() {
@@ -54,101 +35,44 @@ public class MyBankSecurityConfig {
 		CsrfTokenRequestAttributeHandler requestAttributeHandler = new CsrfTokenRequestAttributeHandler();
 		requestAttributeHandler.setCsrfRequestAttributeName("_csrf");
 
-		httpSecurity
-		//56,57 Only required for web applications( Angular/React+Java)
-		.securityContext((securityContext) -> securityContext.requireExplicitSave(false))
-		.sessionManagement(session ->session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
-		
-		.cors((cors) -> cors.configurationSource(new CorsConfigurationSource() {
-			@Override
-			public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-				CorsConfiguration config = new CorsConfiguration();
-				config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
-				config.setAllowedMethods(Collections.singletonList("*"));
-				config.setAllowCredentials(true);
-				config.setAllowedHeaders(Collections.singletonList("*"));
-				config.setMaxAge(3600L);
-				return config;
-			}
-		}))
-		// ignoring CSRF for public POST/PUT APIs
+		httpSecurity/*
+					 * 43,44 Only required for web applications( Angular/React+Java) It creates
+					 * JSESSIONID every time and sends cookie to frontend. This is useful if not JWT
+					 * is used
+					 */
+				.securityContext((securityContext) -> securityContext.requireExplicitSave(false))
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+
+				.cors((cors) -> cors.configurationSource(new CorsConfigurationSource() {
+					@Override
+					public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+						CorsConfiguration config = new CorsConfiguration();
+						config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+						config.setAllowedMethods(Collections.singletonList("*"));
+						config.setAllowCredentials(true);
+						config.setAllowedHeaders(Collections.singletonList("*"));
+						config.setMaxAge(3600L);
+						return config;
+					}
+				}))
+				// ignoring CSRF for public POST/PUT APIs
 				.csrf((csrf) -> csrf.csrfTokenRequestHandler(requestAttributeHandler)
 						.ignoringRequestMatchers("contact", "register")
 						.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
 				.addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
 				.addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
-				/*.addFilterAt(new AuthoritiesLoggingAtFilter(), BasicAuthenticationFilter.class)*/
 				.addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
-				
-				.authorizeHttpRequests((requests) -> requests
-						.requestMatchers("account").hasRole("USER")
-						.requestMatchers("balance").hasAnyRole("USER","ADMIN")
-						.requestMatchers("loan").hasRole("USER")
+
+				.authorizeHttpRequests((requests) -> requests.requestMatchers("account").hasRole("USER")
+						.requestMatchers("balance").hasAnyRole("USER", "ADMIN").requestMatchers("loan").hasRole("USER")
 						.requestMatchers("card").hasRole("ADMIN")
-						//ONLY Authentication
-						.requestMatchers("user").authenticated() 
+						// ONLY Authentication
+						.requestMatchers("user").authenticated()
 						// APIs need to be authenticated -- can use RegEx also
-						.requestMatchers("notice", "contact", "register").permitAll()) // does not needs
-																										// authentication
-				.formLogin(Customizer.withDefaults()).httpBasic(Customizer.withDefaults()); // source of request - Rest
-																							// and HTML form based login
+						.requestMatchers("notice", "contact", "register").permitAll()) // does not needs authentication
+				/* source of request - Rest & HTML form based login */
+				.formLogin(Customizer.withDefaults()).httpBasic(Customizer.withDefaults());
 
 		return httpSecurity.build();
-
 	}
-
-	// Deny All
-	/*
-	 * @Bean SecurityFilterChain filterSecurityChain(HttpSecurity httpSecurity)
-	 * throws Exception {
-	 * 
-	 * httpSecurity.authorizeHttpRequests((request) ->
-	 * request.anyRequest().denyAll())
-	 * .formLogin(Customizer.withDefaults()).httpBasic(Customizer.withDefaults());
-	 * return httpSecurity.build();
-	 * 
-	 * }
-	 */
-
-	// Permit All
-
-	/*
-	 * @Bean SecurityFilterChain filterSecurityChain(HttpSecurity httpSecurity)
-	 * throws Exception {
-	 * 
-	 * httpSecurity.authorizeHttpRequests((request) ->
-	 * request.anyRequest().permitAll())
-	 * .formLogin(Customizer.withDefaults()).httpBasic(Customizer.withDefaults());
-	 * return httpSecurity.build();
-	 * 
-	 * }
-	 */
-
-	// Secures all endpoints invoked from form and basic security
-	/*
-	 * @Bean SecurityFilterChain defaultSecurityFilterChain(HttpSecurity
-	 * httpSecurity) throws Exception { System.out.
-	 * println("Created own bean of security filter chain : CALLED AT APPLICATION STARTUP TIME"
-	 * ); httpSecurity.authorizeHttpRequests((requests) ->
-	 * requests.anyRequest().authenticated());
-	 * httpSecurity.formLogin(Customizer.withDefaults());
-	 * httpSecurity.httpBasic(Customizer.withDefaults()); return
-	 * httpSecurity.build();
-	 * 
-	 * }
-	 */
-
-	/*
-	 * @Bean InMemoryUserDetailsManager userDetailsService() {
-	 * 
-	 * UserDetails admin =
-	 * User.withDefaultPasswordEncoder().username("sanjay").password("1234").
-	 * authorities("admin") .build(); UserDetails user =
-	 * User.withDefaultPasswordEncoder().username("mamta").password("1234").
-	 * authorities("user") .build();
-	 * 
-	 * return new InMemoryUserDetailsManager(admin, user);
-	 * 
-	 * }
-	 */
 }
