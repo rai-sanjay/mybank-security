@@ -1,6 +1,5 @@
 package com.mybank.config;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
@@ -17,7 +16,6 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import com.mybank.constant.AppConstant;
 import com.mybank.filter.AuthoritiesLoggingAfterFilter;
 import com.mybank.filter.CsrfCookieFilter;
 import com.mybank.filter.RequestValidationBeforeFilter;
@@ -36,8 +34,14 @@ public class MyBankSecurityConfig {
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		CsrfTokenRequestAttributeHandler requestAttributeHandler = new CsrfTokenRequestAttributeHandler();
 		requestAttributeHandler.setCsrfRequestAttributeName("_csrf");
-		/* Let Spring know that no SESSION to be managed */
-		httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+		httpSecurity/*
+					 * 43,44 Only required for web applications( Angular/React+Java) It creates
+					 * JSESSIONID every time and sends cookie to frontend. This is useful if not JWT
+					 * is used
+					 */
+				.securityContext((securityContext) -> securityContext.requireExplicitSave(false))
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
 
 				.cors((cors) -> cors.configurationSource(new CorsConfigurationSource() {
 					@Override
@@ -47,8 +51,6 @@ public class MyBankSecurityConfig {
 						config.setAllowedMethods(Collections.singletonList("*"));
 						config.setAllowCredentials(true);
 						config.setAllowedHeaders(Collections.singletonList("*"));
-						/* Let Browser know that no header to be accepted */
-						config.setExposedHeaders(Arrays.asList(AppConstant.JWT_RESPONSE_HEADER));
 						config.setMaxAge(3600L);
 						return config;
 					}
